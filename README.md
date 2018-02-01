@@ -1,6 +1,8 @@
 # WowCowTown
 Virtual Cows with Virtual Lives
 
+(Just for fun, written in Python3)
+
 
 ## Currently:
 
