@@ -9,7 +9,7 @@ Virtual Cows with Virtual Lives
 2) Cows make more cows
 
 3) if cows eat they live
-3b) if cows don't eat they die
+3b. if cows don't eat they die
 
 ## To Be Added
 
