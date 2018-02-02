@@ -4,12 +4,7 @@ WowCowTown -
 
 Simulation Cows
 
-1) Tiles hold cows and food
-2) Cows on a tile eat food to replace hunger
-3) Cows die when hunger reaches zero
-4) Tiles regenerate food over time
-
-Future: Cows have stats, stats will drift over time based off of advantages of stats
+Cows Stats (Which Currently Do Nothing):
 
 Strength: str
 Perception: per
@@ -19,16 +14,19 @@ Intelligence: int
 Agility: agi
 Luck: luc
 """
+
 import sys
 if sys.version_info.major != 3:
     print("Use Python3!")
     raise SystemExit
 
 
+
 from random import randint
 #from operator import itemgetter
 from time import sleep
 from statistics import *
+
 
 def rand(m):
     return randint(0,m)
@@ -102,7 +100,7 @@ class town:
                 else:
                     self.deadCows.append(cow)
     
-                    #Garbage Cleanup should go here, just in case
+                    #"Garbage Collection" should go here, if added
         
                     self.cows.remove(cow)
 
@@ -136,17 +134,19 @@ class tile:
         self.foodcountergoal = 200
         self.foodcounterregenchance = 20
 
-
+        
     def enter(self, cow):
         self.cowsInside.append(cow)
         cow.location = self
         self.enterEffect(cow)
 
+        
     def exit(self, cow):
         self.cowsInside.remove(cow)
         cow.location = None
         self.exitEffect(cow)
 
+        
     def tick(self):
         self.foodcounter += 1
         if self.foodcounter > self.foodcountergoal:
@@ -162,12 +162,17 @@ class tile:
             return "   "
 
 
+    ###Functions for users to add/modify should go below here
 
+        
+    
     def enterEffect(self, cow):
+        """Programmable enter effects go here """
         #print("Cow %s entered tile %s" % (cow.name, self.name))
         pass
 
     def exitEffect(self, cow):
+        """Programmable enter effects go here """
         pass
 
 
@@ -175,7 +180,6 @@ class tile:
 
     
 class cowClass:
-
     _defaultSpecial = {
         'str': 1,
         'per': 1,
@@ -187,28 +191,24 @@ class cowClass:
 
         }
 
-    def __init__(self, hometown, special={}, name="", gender=None):
-
-        hometown.cows.append(self)
-        
+    def __init__(self, hometown, special={}, name="", gender=None):       
         self.name = str(name)
         self.cid = hometown.nextCowID
         self.alive = True
         self.location = None
         self.parents = set()
         self.hometown = hometown
-
         self.breather = 0
         self.hunger = self.maxhunger = 50
 
-        if gender:
-            self.gender = gender
-        else:
-            self.gender = rand(1)
-
+        #Cow's gender is selected randomly if not defined
+        if gender!=None: self.gender = gender
+        else: self.gender = rand(1)
 
         self.special = self._defaultSpecial.copy()
         self.special.update(special)
+
+        hometown.cows.append(self)
 
 
     def __getitem__(self, key):
@@ -217,7 +217,12 @@ class cowClass:
     def __repr__(self):
         return "%s|%s" % (self.cid, self.gender)
 
+    
     def tick(self):
+        """
+        Things tht happen to a cow every turn. 
+        Currently some decisions go here, but in the future those will be removed
+        """
         if self.breather > 0:
             self.breather -= 1
 
@@ -225,11 +230,6 @@ class cowClass:
             if self.location.food > 0:
                 self.location.food -= 1
                 self.hunger += 3
-                
-##                if rand(1000) == 0:
-##                    self.special['cha'] += 1
-                    
-            
 
         self.hunger -= 1
         if self.hunger < 0:
@@ -239,6 +239,7 @@ class cowClass:
         
 
     def think(self, tilechoices):
+        """This is where a cow selects which tile to move to"""
         if self.location.food <= 0:
             return tilechoices[rand(len(tilechoices)-1)]
         else:
@@ -274,29 +275,39 @@ class cowClass:
             if len(localCows) > 0:
                 return localCows[rand(len(localCows)-1)]
 
-                    
-def checkc(tow):
+
+
+            
+def checkstat(town, stat='cha'):
+    """Return Dictionary showing number of all cows with a stat level
+
+    Example:
+    { 15: 2   # 2 cows have level 15
+      50: 5   # 5 cows have level 50
+    }
+
+    """
     counter = {}
-    for c in tow.cows:
-        counter[c['cha']] = counter.get(c['cha'], 0)+1
+    for c in town.cows:
+        counter[c[stat]] = counter.get(c[stat], 0)+1
     return counter
 
 
-t = town(40, 40)
+
+t = town(40, 40)  #Create a 40x40 grid with 40 cows
 
 
-#Cool commands
-"""
-t.disp()   #display a representation of WowCowTown
+###Example commands###
 
-t.step()   #Simulate one "tick"
+#t.disp()   #display a representation of WowCowTown
 
-t.graph()  #Automatically tick forward, and graph the amount of cows over time
+###Remember that t.disp() does NOT move the simulation forward
+
+#t.step()   #Simulate one "tick"
+
+#t.graph()  #Automatically tick forward, and graph the amount of cows over time
 
 
-#Remember that t.disp() does NOT move the simulation forward. a t.step() is required to advance
-
-"""
 
 
 
