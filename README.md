@@ -1,6 +1,8 @@
 # WowCowTown
 Virtual Cows with Virtual Lives
 
+
+
 ## Currently:
 
 1) Start with cows
@@ -9,7 +11,7 @@ Virtual Cows with Virtual Lives
 
 3) if cows eat they live
 
-3b) if cows don't eat they die
+4) if cows don't eat they die
 
 ## To Be Added
 

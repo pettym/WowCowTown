@@ -241,7 +241,3 @@ t = Town(50)
 t.delay = 0.1
 t.sim(100000,1)
 
-while True:
-    t.step(100)
-    print(len(t.cows))
-
