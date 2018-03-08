@@ -22,7 +22,7 @@ Virtual Cows with Virtual Lives
 -Cow Social Groups
 
 
-##How To Use
+## How To Use
 
 1) Download wowcowtown.py
 
