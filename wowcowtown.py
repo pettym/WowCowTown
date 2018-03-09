@@ -1,14 +1,29 @@
-#!/usr/bin/env python3
-
 import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
+
+from statistics import *
 
 from random import randint
 
 def rc(iterator):
     return iterator[randint(0,len(iterator)-1)]
 
+def sa(items, attr):
+    keeper = {}
+
+    for item in items:
+        count = getattr(item, attr)
+        if hasattr(count, "__iter__"):
+            count = len(count)
+        if keeper.get(count):
+            keeper[count].append(item)
+        else:
+            keeper[count] = [item]
+
+    highlow = list(keeper.keys())
+    highlow.sort()
+    return (keeper, highlow)
 
 
 class Town:
@@ -79,6 +94,12 @@ class Town:
 
 
     def disp(self):
+
+        ###
+        #Optional Population Graph, Remove if editing params
+        ###
+        print("(%s) %s" % (len(self.cows), "="*int(len(self.cows)/10)))
+        
         plt.clf()          
 
         plt.pcolormesh([[y.food for y in x] for x in self.grid], cmap=self.cmap)        
@@ -91,13 +112,13 @@ class Town:
         cow = self.Cow(self, self.cid)
         self.cows.append(cow)
         tile.enterCow(cow)
-        print("Cow %s Made (%s)"  % (cow, len(self.cows)))
+        #print("Cow %s Made (%s)"  % (cow, len(self.cows)))
 
     def dieCow(self, cow):
         cow.tile.leaveCow(cow)
         cow.isDead = True
         self.cows.remove(cow)
-        print("Cow %s died (%s)" % (cow, len(self.cows)))
+        #print("Cow %s died (%s)" % (cow, len(self.cows)))
 
     def passMoves(self, cow):
         ct = cow.tile
@@ -209,7 +230,17 @@ class Town:
             return "c%s" % (self.nid)
 
         def think(self, options):
-            return rc(options) #Temporary AI == Random
+            #return rc(options) #Full Random
+            
+            if self.mateTimeout < 0:
+                if self.food > self.maxFood *0.3:
+                    options = [ o for o in options if o!=self.tile]
+                    keeper, highlow = sa(options, "cows")
+                else:
+                    keeper, highlow = sa(options, "food")
+            else:
+                keeper, highlow = sa(options, "food")
+            return rc(keeper[highlow[-1]])
 
 
         def selectMate(self, mates):
@@ -240,6 +271,10 @@ class Town:
 
 
 t = Town(50)
-t.delay = 0.1
+t.delay = 0.01
 t.sim(100000,1)
+
+while True:
+    t.step(100)
+    print(len(t.cows))
 
