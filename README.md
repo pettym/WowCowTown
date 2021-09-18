@@ -21,15 +21,3 @@ Virtual Cows with Virtual Lives
 
 -Cow Social Groups
 
-
-## How To Use
-
-1) Download wowcowtown.py
-
-2) Ensure matplotlib and numpy are installed
-
-3) Run using Python3
-
-4) Experience Cows
-
-5) (Optional) Mess with variables to change the simulation
